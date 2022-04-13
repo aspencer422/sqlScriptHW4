@@ -1,0 +1,138 @@
+
+CREATE TABLE instrument (
+                name VARCHAR NOT NULL,
+                pitch VARCHAR NOT NULL,
+                CONSTRAINT name PRIMARY KEY (name)
+);
+
+
+CREATE SEQUENCE address_addressid_seq;
+
+CREATE TABLE Address (
+                AddressID INTEGER NOT NULL DEFAULT nextval('address_addressid_seq'),
+                zip INTEGER NOT NULL,
+                phone INTEGER NOT NULL,
+                Street1 VARCHAR NOT NULL,
+                Street2 VARCHAR,
+                Number INTEGER NOT NULL,
+                City VARCHAR NOT NULL,
+                State VARCHAR NOT NULL,
+                CONSTRAINT addressid PRIMARY KEY (AddressID)
+);
+
+
+ALTER SEQUENCE address_addressid_seq OWNED BY Address.AddressID;
+
+CREATE TABLE Musician (
+                SSN INTEGER NOT NULL,
+                Name VARCHAR NOT NULL,
+                AddressID INTEGER NOT NULL,
+                CONSTRAINT ssn PRIMARY KEY (SSN)
+);
+
+
+CREATE TABLE song (
+                title VARCHAR NOT NULL,
+                SSN INTEGER NOT NULL,
+                length TIME NOT NULL,
+                CONSTRAINT name PRIMARY KEY (title)
+);
+
+
+CREATE TABLE playedWith (
+                title VARCHAR NOT NULL,
+                name VARCHAR NOT NULL,
+                CONSTRAINT playedwith_pk PRIMARY KEY (title, name)
+);
+
+
+CREATE SEQUENCE album_albumid_seq;
+
+CREATE TABLE Album (
+                albumID INTEGER NOT NULL DEFAULT nextval('album_albumid_seq'),
+                age INTEGER NOT NULL,
+                SSN INTEGER NOT NULL,
+                releaseData DATE NOT NULL,
+                format VARCHAR NOT NULL,
+                CONSTRAINT albumid PRIMARY KEY (albumID)
+);
+
+
+ALTER SEQUENCE album_albumid_seq OWNED BY Album.albumID;
+
+CREATE TABLE profroms (
+                SSN INTEGER NOT NULL,
+                title VARCHAR NOT NULL,
+                CONSTRAINT profroms_pk PRIMARY KEY (SSN, title)
+);
+
+
+CREATE TABLE pays (
+                SSN INTEGER NOT NULL,
+                name VARCHAR NOT NULL,
+                CONSTRAINT plays PRIMARY KEY (SSN, name)
+);
+
+
+ALTER TABLE pays ADD CONSTRAINT instrument_pays_fk
+FOREIGN KEY (name)
+REFERENCES instrument (name)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE playedWith ADD CONSTRAINT instrument_playedwith_fk
+FOREIGN KEY (name)
+REFERENCES instrument (name)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE Musician ADD CONSTRAINT address_musician_fk
+FOREIGN KEY (AddressID)
+REFERENCES Address (AddressID)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE pays ADD CONSTRAINT musician_pays_fk
+FOREIGN KEY (SSN)
+REFERENCES Musician (SSN)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE profroms ADD CONSTRAINT musician_profroms_fk
+FOREIGN KEY (SSN)
+REFERENCES Musician (SSN)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE Album ADD CONSTRAINT musician_album_fk
+FOREIGN KEY (SSN)
+REFERENCES Musician (SSN)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE song ADD CONSTRAINT musician_song_fk
+FOREIGN KEY (SSN)
+REFERENCES Musician (SSN)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE profroms ADD CONSTRAINT song_profroms_fk
+FOREIGN KEY (title)
+REFERENCES song (title)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE playedWith ADD CONSTRAINT song_playedwith_fk
+FOREIGN KEY (title)
+REFERENCES song (title)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
